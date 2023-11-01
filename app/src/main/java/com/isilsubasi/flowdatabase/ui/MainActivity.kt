@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isilsubasi.flowdatabase.R
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private val viewModel : DatabaseViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
+
+    var selectedItem = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityMainBinding.inflate(layoutInflater)
@@ -75,7 +78,8 @@ class MainActivity : AppCompatActivity() {
                         return@setOnMenuItemClickListener true
                     }
                     R.id.actionSort -> {
-                        return@setOnMenuItemClickListener false
+                        filter()
+                        return@setOnMenuItemClickListener true
                     }
                     R.id.actionSearch -> {
                         return@setOnMenuItemClickListener false
@@ -100,6 +104,26 @@ class MainActivity : AppCompatActivity() {
                 listBody.visibility = View.VISIBLE
             }
         }
+    }
+
+
+    private fun filter(){
+
+        val builder = AlertDialog.Builder(this)
+        val sortItem = arrayOf("Newer(Default)","Name : A-Z" , "Name : Z-A")
+        builder.setSingleChoiceItems(sortItem,selectedItem){ dialog , item ->
+            when(item){
+                0-> viewModel.getAllContacts()
+                1->viewModel.sortedASC()
+                2->viewModel.sortedDESC()
+            }
+            selectedItem=item
+            dialog.dismiss()
+        }
+
+        val alertDialog : AlertDialog = builder.create()
+        alertDialog.show()
+
     }
 
 }

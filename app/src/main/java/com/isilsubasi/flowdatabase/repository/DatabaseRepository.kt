@@ -13,5 +13,9 @@ class DatabaseRepository @Inject constructor(private val dao: ContactsDao){
 
     fun deleteAllContacts()=dao.deleteAllContacts()
 
+    fun sortedASC()=dao.sortedASC()
+
+    fun sortedDESC()=dao.sortedDESC()
+
 
 }

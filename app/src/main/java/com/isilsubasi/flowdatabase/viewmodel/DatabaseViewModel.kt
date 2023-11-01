@@ -38,6 +38,16 @@ class DatabaseViewModel  @Inject constructor(private val repository: DatabaseRep
         repository.deleteAllContacts()
     }
 
+    fun sortedASC() = viewModelScope.launch {
+        repository.sortedASC()
+            .catch { _contactsList.postValue(DataStatus.error(it.message.toString())) }
+            .collect{_contactsList.postValue(DataStatus.success(it,it.isEmpty()))}
+    }
+    fun sortedDESC() = viewModelScope.launch {
+        repository.sortedDESC()
+            .catch { _contactsList.postValue(DataStatus.error(it.message.toString())) }
+            .collect{_contactsList.postValue(DataStatus.success(it,it.isEmpty()))}
+    }
 
 
 }

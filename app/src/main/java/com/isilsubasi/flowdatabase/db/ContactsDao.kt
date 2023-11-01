@@ -19,4 +19,10 @@ interface ContactsDao {
     @Query("DELETE FROM $CONTACTS_TABLE")
     fun deleteAllContacts()
 
+    @Query("SELECT * FROM $CONTACTS_TABLE ORDER BY name ASC")
+    fun sortedASC() : Flow<MutableList<ContactsEntity>>
+
+    @Query("SELECT * FROM $CONTACTS_TABLE ORDER BY name DESC")
+    fun sortedDESC() : Flow<MutableList<ContactsEntity>>
+
 }
