@@ -17,5 +17,7 @@ class DatabaseRepository @Inject constructor(private val dao: ContactsDao){
 
     fun sortedDESC()=dao.sortedDESC()
 
+    fun searchContact(name: String) = dao.searchContact(name)
+
 
 }

@@ -2,11 +2,13 @@ package com.isilsubasi.flowdatabase.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.isilsubasi.flowdatabase.R
 import com.isilsubasi.flowdatabase.adapter.ContactsAdapter
@@ -36,8 +38,9 @@ class MainActivity : AppCompatActivity() {
         binding=ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         binding.apply {
-            //setSupportActionBar(toolbar)
+            setSupportActionBar(toolbar)
 
             btnShowDialog.setOnClickListener {
                 AddContactFragment().show(supportFragmentManager,AddContactFragment().tag)
@@ -81,9 +84,6 @@ class MainActivity : AppCompatActivity() {
                         filter()
                         return@setOnMenuItemClickListener true
                     }
-                    R.id.actionSearch -> {
-                        return@setOnMenuItemClickListener false
-                    }
                     else -> {return@setOnMenuItemClickListener false}
                 }
             }
@@ -124,6 +124,28 @@ class MainActivity : AppCompatActivity() {
         val alertDialog : AlertDialog = builder.create()
         alertDialog.show()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar, menu)
+        val search = menu!!.findItem(R.id.actionSearch)
+        val searchView = search.actionView as SearchView
+        Log.e("isil","burada")
+        searchView.queryHint = "Search..."
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.e("isil","burada2")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                Log.e("isil","burada3")
+                viewModel.getSearchContacts(newText!!)
+                return true
+            }
+
+        })
+        return super.onCreateOptionsMenu(menu)
     }
 
 }

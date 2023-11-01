@@ -25,4 +25,8 @@ interface ContactsDao {
     @Query("SELECT * FROM $CONTACTS_TABLE ORDER BY name DESC")
     fun sortedDESC() : Flow<MutableList<ContactsEntity>>
 
+
+    @Query("SELECT * FROM $CONTACTS_TABLE WHERE name LIKE '%' || :name || '%' ")
+    fun searchContact(name: String): Flow<MutableList<ContactsEntity>>
+
 }

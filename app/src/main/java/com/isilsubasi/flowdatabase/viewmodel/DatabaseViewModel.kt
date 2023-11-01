@@ -49,5 +49,11 @@ class DatabaseViewModel  @Inject constructor(private val repository: DatabaseRep
             .collect{_contactsList.postValue(DataStatus.success(it,it.isEmpty()))}
     }
 
+    fun getSearchContacts(name: String) = viewModelScope.launch {
+        repository.searchContact(name).collect() {
+            _contactsList.postValue(DataStatus.success(it, it.isEmpty()))
+        }
+    }
+
 
 }
