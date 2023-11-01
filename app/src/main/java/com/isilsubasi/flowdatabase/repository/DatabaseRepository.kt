@@ -9,5 +9,7 @@ class DatabaseRepository @Inject constructor(private val dao: ContactsDao){
 
     suspend fun saveContact(entity: ContactsEntity) = dao.saveContacts(entity)
 
+    fun getAllContacts()=dao.getAllContacts()
+
 
 }
