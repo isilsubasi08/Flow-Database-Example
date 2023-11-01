@@ -34,6 +34,9 @@ class DatabaseViewModel  @Inject constructor(private val repository: DatabaseRep
     }
 
 
+    fun deleteAllContacts() =viewModelScope.launch {
+        repository.deleteAllContacts()
+    }
 
 
 

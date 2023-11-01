@@ -16,4 +16,7 @@ interface ContactsDao {
     @Query("SELECT * FROM $CONTACTS_TABLE")
     fun getAllContacts() : Flow<MutableList<ContactsEntity>>
 
+    @Query("DELETE FROM $CONTACTS_TABLE")
+    fun deleteAllContacts()
+
 }

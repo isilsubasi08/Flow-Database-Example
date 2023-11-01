@@ -10,6 +10,7 @@ import com.isilsubasi.flowdatabase.R
 import com.isilsubasi.flowdatabase.adapter.ContactsAdapter
 import com.isilsubasi.flowdatabase.databinding.ActivityMainBinding
 import com.isilsubasi.flowdatabase.ui.addFragment.AddContactFragment
+import com.isilsubasi.flowdatabase.ui.deleteAll.DeleteAllFragment
 import com.isilsubasi.flowdatabase.utils.DataStatus
 import com.isilsubasi.flowdatabase.utils.isVisible
 import com.isilsubasi.flowdatabase.viewmodel.DatabaseViewModel
@@ -64,6 +65,22 @@ class MainActivity : AppCompatActivity() {
                 }
 
 
+            }
+
+            toolbar.setOnMenuItemClickListener {
+                when(it.itemId){
+                    R.id.actionDeleteAll -> {
+                        DeleteAllFragment().show(supportFragmentManager,DeleteAllFragment().tag)
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.actionSort -> {
+                        return@setOnMenuItemClickListener false
+                    }
+                    R.id.actionSearch -> {
+                        return@setOnMenuItemClickListener false
+                    }
+                    else -> {return@setOnMenuItemClickListener false}
+                }
             }
 
 
