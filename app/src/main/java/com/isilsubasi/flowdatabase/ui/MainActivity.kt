@@ -2,6 +2,7 @@ package com.isilsubasi.flowdatabase.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -89,15 +90,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun showEmpty(isShown: Boolean){
+    private fun showEmpty(isShown: Boolean) {
         binding.apply {
-            if (isShown){
-                emptyBody.isVisible(true,listBody)
-            }else{
-                emptyBody.isVisible(false,listBody)
+            if (isShown) {
+                emptyBody.visibility = View.VISIBLE
+                listBody.visibility = View.GONE
+            } else {
+                emptyBody.visibility = View.GONE
+                listBody.visibility = View.VISIBLE
             }
         }
-
     }
 
 }
