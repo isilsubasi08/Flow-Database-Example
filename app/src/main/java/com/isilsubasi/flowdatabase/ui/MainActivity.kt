@@ -1,5 +1,7 @@
 package com.isilsubasi.flowdatabase.ui
 
+import android.graphics.Canvas
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,16 +11,21 @@ import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.isilsubasi.flowdatabase.R
 import com.isilsubasi.flowdatabase.adapter.ContactsAdapter
 import com.isilsubasi.flowdatabase.databinding.ActivityMainBinding
 import com.isilsubasi.flowdatabase.ui.addFragment.AddContactFragment
 import com.isilsubasi.flowdatabase.ui.deleteAll.DeleteAllFragment
+import com.isilsubasi.flowdatabase.utils.Constants.BUNDLE_ID
 import com.isilsubasi.flowdatabase.utils.DataStatus
 import com.isilsubasi.flowdatabase.utils.isVisible
 import com.isilsubasi.flowdatabase.viewmodel.DatabaseViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import javax.inject.Inject
 
 
@@ -88,6 +95,77 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            val swipCallback = object : ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                   val position=viewHolder.adapterPosition
+                    val contact = contactsAdapter.differ.currentList[position]
+                    when(direction){
+                        ItemTouchHelper.LEFT -> {
+                           viewModel.deleteContact(contact)
+                           Snackbar.make(binding.root,"Item Deleted!",Snackbar.LENGTH_LONG).apply {
+                               setAction("UNDO"){
+                                   viewModel.saveContacts(false,contact)
+                               }
+                           }.show()
+                        }
+                        ItemTouchHelper.RIGHT -> {
+                            val addContactFragment=AddContactFragment()
+                            val bundle = Bundle()
+                            bundle.putInt(BUNDLE_ID,contact.id)
+                            addContactFragment.arguments=bundle
+                            addContactFragment.show(supportFragmentManager,AddContactFragment().tag)
+                        }
+                    }
+
+                }
+
+                override fun onChildDraw(
+                    c: Canvas,
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    dX: Float,
+                    dY: Float,
+                    actionState: Int,
+                    isCurrentlyActive: Boolean
+                ) {
+
+                    RecyclerViewSwipeDecorator.Builder(c,recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive)
+                        .addSwipeLeftLabel("Delete")
+                        .addSwipeLeftBackgroundColor(Color.RED)
+                        .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
+                        .setSwipeLeftLabelColor(Color.WHITE)
+                        .setSwipeLeftActionIconTint(Color.WHITE)
+                        .addSwipeRightLabel("Edit")
+                        .addSwipeRightBackgroundColor(Color.GREEN)
+                        .addSwipeRightActionIcon(R.drawable.ic_baseline_edit_24)
+                        .setSwipeRightLabelColor(Color.WHITE)
+                        .setSwipeRightActionIconTint(Color.WHITE)
+                        .create()
+                        .decorate()
+
+                    super.onChildDraw(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
+                }
+
+            }
+
+            val itemTouchHelper=ItemTouchHelper(swipCallback)
+            itemTouchHelper.attachToRecyclerView(rvContacts)
 
         }
 
@@ -130,16 +208,13 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_toolbar, menu)
         val search = menu!!.findItem(R.id.actionSearch)
         val searchView = search.actionView as SearchView
-        Log.e("isil","burada")
         searchView.queryHint = "Search..."
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.e("isil","burada2")
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                Log.e("isil","burada3")
                 viewModel.getSearchContacts(newText!!)
                 return true
             }

@@ -19,5 +19,11 @@ class DatabaseRepository @Inject constructor(private val dao: ContactsDao){
 
     fun searchContact(name: String) = dao.searchContact(name)
 
+    suspend fun updateContact(entity: ContactsEntity)=dao.updateContact(entity)
+
+    suspend fun deleteContact(entity: ContactsEntity)=dao.deleteContact(entity)
+
+    fun getContact(id : Int) = dao.getContact(id)
+
 
 }

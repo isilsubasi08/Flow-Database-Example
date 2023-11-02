@@ -1,9 +1,6 @@
 package com.isilsubasi.flowdatabase.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.isilsubasi.flowdatabase.utils.Constants.CONTACTS_TABLE
 import kotlinx.coroutines.flow.Flow
 
@@ -28,5 +25,14 @@ interface ContactsDao {
 
     @Query("SELECT * FROM $CONTACTS_TABLE WHERE name LIKE '%' || :name || '%' ")
     fun searchContact(name: String): Flow<MutableList<ContactsEntity>>
+
+    @Update
+    suspend fun updateContact(entity: ContactsEntity)
+
+    @Delete
+    suspend fun deleteContact(entity: ContactsEntity)
+
+    @Query("SELECT * FROM $CONTACTS_TABLE WHERE id == :id")
+    fun getContact(id : Int) : Flow<ContactsEntity>
 
 }

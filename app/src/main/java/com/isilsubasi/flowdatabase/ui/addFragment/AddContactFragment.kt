@@ -13,6 +13,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.isilsubasi.flowdatabase.R
 import com.isilsubasi.flowdatabase.databinding.FragmentAddContactBinding
 import com.isilsubasi.flowdatabase.db.ContactsEntity
+import com.isilsubasi.flowdatabase.utils.Constants.BUNDLE_ID
+import com.isilsubasi.flowdatabase.utils.Constants.EDIT
+import com.isilsubasi.flowdatabase.utils.Constants.NEW
 import com.isilsubasi.flowdatabase.viewmodel.DatabaseViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -30,6 +33,9 @@ class AddContactFragment : DialogFragment() {
     private var name=""
     private var phone=""
 
+    private var type = ""
+    private var isEdit = false
+
     private lateinit var binding: FragmentAddContactBinding
 
 
@@ -44,10 +50,33 @@ class AddContactFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        contactId=arguments?.getInt(BUNDLE_ID) ?: 0
+
+        if (contactId>0){
+            type= EDIT
+            isEdit=true
+        }else{
+            type= NEW
+            isEdit=false
+        }
+
         binding.apply {
             imgClose.setOnClickListener {
                 dismiss()
             }
+
+            if (type == EDIT){
+                viewModel.getContact(contactId)
+                viewModel.contactDetails.observe(viewLifecycleOwner){ itData ->
+                    itData.data?.let {
+                        edtName.setText(it.name)
+                        edtPhone.setText(it.phone)
+                    }
+
+                }
+            }
+
             btnSave.setOnClickListener {
                 name=edtName.text.toString()
                 phone=edtPhone.text.toString()
@@ -60,7 +89,7 @@ class AddContactFragment : DialogFragment() {
                     entity.name=name
                     entity.phone=phone
 
-                    viewModel.saveContacts(entity)
+                    viewModel.saveContacts(isEdit,entity)
                     edtName.setText("")
                     edtPhone.setText("")
                     dismiss()

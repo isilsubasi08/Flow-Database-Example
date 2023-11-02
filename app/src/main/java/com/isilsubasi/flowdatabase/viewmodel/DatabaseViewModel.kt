@@ -22,8 +22,19 @@ class DatabaseViewModel  @Inject constructor(private val repository: DatabaseRep
     get() = _contactsList
 
 
-    fun saveContacts(entity: ContactsEntity) = viewModelScope.launch {
-        repository.saveContact(entity)
+    private val _contactDetails = MutableLiveData<DataStatus<ContactsEntity>>()
+    val contactDetails : LiveData<DataStatus<ContactsEntity>>
+    get()=_contactDetails
+
+
+    fun saveContacts(isEdit : Boolean,entity: ContactsEntity) = viewModelScope.launch {
+        if (isEdit){
+            repository.updateContact(entity)
+        }else{repository.saveContact(entity)}
+    }
+
+    fun deleteContact(entity: ContactsEntity) = viewModelScope.launch {
+        repository.deleteContact(entity)
     }
 
 
@@ -55,5 +66,10 @@ class DatabaseViewModel  @Inject constructor(private val repository: DatabaseRep
         }
     }
 
+    fun getContact(id : Int) =viewModelScope.launch {
+        repository.getContact(id).collect{
+            _contactDetails.postValue(DataStatus.success(it,false))
+        }
+    }
 
 }
